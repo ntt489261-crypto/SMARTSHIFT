@@ -354,7 +354,6 @@ function renderTasks() {
 // 8. HIEN THI LICH SU BAN GIAO
 
 function renderHistory() {
-    alert("RENDER HISTORY ĐANG CHẠY");
     const list = document.getElementById("history-list");
     const empty = document.getElementById("history-empty");
 
@@ -365,7 +364,6 @@ function renderHistory() {
 
     empty.classList.toggle("hidden", handovers.length > 0);
 console.log("ADMIN CHECK:", user && user.role === "admin");
-alert("ROLE = " + user.role);
     list.innerHTML = handovers.map(item => `
         <div class="history-card">
             <h3>Phiếu bàn giao #${item.id}</h3>
