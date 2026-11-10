@@ -354,11 +354,20 @@ function renderTasks() {
 // 8. HIEN THI LICH SU BAN GIAO
 
 function renderHistory() {
+    alert("RENDER HISTORY ĐANG CHẠY");
     const list = document.getElementById("history-list");
     const empty = document.getElementById("history-empty");
 
-    empty.classList.toggle("hidden", handovers.length > 0);
+    const user = JSON.parse(
+        localStorage.getItem("smartshift_user") || "null"
+    );
 
+    console.log("Lịch sử bàn giao:", handovers.length);
+    console.log("Vai trò:", user?.role);
+
+    empty.classList.toggle("hidden", handovers.length > 0);
+console.log("ADMIN CHECK:", user && user.role === "admin");
+alert("ROLE = " + user.role);
     list.innerHTML = handovers.map(item => `
         <div class="history-card">
             <h3>Phiếu bàn giao #${item.id}</h3>
@@ -370,16 +379,28 @@ function renderHistory() {
             <p><b>Đã hoàn thành:</b> ${escapeHTML(item.done || "Không có")}</p>
             <p><b>Cần tiếp tục:</b> ${escapeHTML(item.remaining || "Không có")}</p>
             <p><b>Ghi chú:</b> ${escapeHTML(item.notes || "Không có")}</p>
+
+            ${user && user.role === "admin" ? `
+                <button class="delete-handover"
+                    onclick="deleteHandover(${item.id})">
+                    Xóa phiếu
+                </button>
+            ` : ""}
         </div>
     `).join("");
 }
 
+
 // 9. CAP NHAT TOAN BO GIAO DIEN
+
 
 function renderAll() {
     renderDashboard();
     renderTasks();
+    renderHistory();
+}
 
+// Xử lý khi thay đổi trạng thái công việc
 document.getElementById("tasks-table").addEventListener(
     "change",
     async function(event) {
@@ -392,8 +413,6 @@ document.getElementById("tasks-table").addEventListener(
     }
 );
 
-    renderHistory();
-}
 
 // 10. KHOI DONG PHAN MEM
 
@@ -612,6 +631,11 @@ async function logout() {
 window.logout = logout;
 // PHAN QUYEN MENU
 function applyRolePermissions() {
+    console.log("renderHistory đang chạy");
+console.log("Tài khoản:", localStorage.getItem("smartshift_user"));
+    console.log("Vai trò hiện tại:", JSON.parse(
+    localStorage.getItem("smartshift_user") || "null"
+));
     const user = JSON.parse(
         localStorage.getItem("smartshift_user")
     );
@@ -637,3 +661,43 @@ if (profileName) {
         }
     });
 }
+async function deleteHandover(id) {
+    const user = JSON.parse(
+        localStorage.getItem("smartshift_user") || "null"
+    );
+
+    if (!user || user.role !== "admin") {
+        alert("Bạn không có quyền xóa phiếu!");
+        return;
+    }
+
+    const confirmed = confirm(
+        "Bạn có chắc chắn muốn xóa phiếu bàn giao này không?"
+    );
+
+    if (!confirmed) return;
+
+    const oldHandovers = [...handovers];
+    const oldTasks = [...tasks];
+
+    handovers = handovers.filter(
+        item => item.id !== id
+    );
+
+    tasks = tasks.filter(
+        item => item.handoverId !== id
+    );
+
+    try {
+        await saveData();
+        renderAll();
+        alert("Đã xóa phiếu bàn giao thành công!");
+    } catch (error) {
+        handovers = oldHandovers;
+        tasks = oldTasks;
+        renderAll();
+        alert("Không thể xóa phiếu. Vui lòng thử lại!");
+    }
+}
+
+window.deleteHandover = deleteHandover;
