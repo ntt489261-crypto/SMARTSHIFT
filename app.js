@@ -363,7 +363,6 @@ function renderHistory() {
 
 
     empty.classList.toggle("hidden", handovers.length > 0);
-console.log("ADMIN CHECK:", user && user.role === "admin");
     list.innerHTML = handovers.map(item => `
         <div class="history-card">
             <h3>Phiếu bàn giao #${item.id}</h3>
