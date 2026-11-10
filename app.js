@@ -362,8 +362,6 @@ function renderHistory() {
         localStorage.getItem("smartshift_user") || "null"
     );
 
-    console.log("Lịch sử bàn giao:", handovers.length);
-    console.log("Vai trò:", user?.role);
 
     empty.classList.toggle("hidden", handovers.length > 0);
 console.log("ADMIN CHECK:", user && user.role === "admin");
@@ -631,7 +629,6 @@ async function logout() {
 window.logout = logout;
 // PHAN QUYEN MENU
 function applyRolePermissions() {
-    console.log("renderHistory đang chạy");
 console.log("Tài khoản:", localStorage.getItem("smartshift_user"));
     console.log("Vai trò hiện tại:", JSON.parse(
     localStorage.getItem("smartshift_user") || "null"
