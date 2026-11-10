@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMARTSHIFT - Quản lý ca làm</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="loginScreen" class="login-screen">
+    <div class="login-box">
+        <h1>SMARTSHIFT</h1>
+        <p>Hệ thống quản lý bàn giao ca</p>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Tên đăng nhập"
+        >
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Mật khẩu"
+            >
+
+        <button onclick="login()">Đăng nhập</button>
+
+        <p id="loginError"></p>
+    </div>
+</div>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">S</div>
+            <div>
+                <h2>SMARTSHIFT</h2>
+                <p>SHIFT MANAGEMENT</p>
+            </div>
+        </div>
+
+        <p class="menu-title">MENU CHÍNH</p>
+
+        <button class="nav-item active" data-page="dashboard" data-roles="admin,handover,receiver">
+            ▦ <span>Tổng quan</span>
+        </button>
+
+        <button class="nav-item" data-page="handover" data-roles="admin,handover">
+            ⇄ <span>Bàn giao ca</span>
+        </button>
+
+        <button class="nav-item" data-page="tasks" data-roles="admin,handover,receiver">
+            ☷ <span>Công việc</span>
+        </button>
+
+        <button class="nav-item" data-page="history" data-roles="admin,receiver">
+            ◷ <span>Lịch sử bàn giao</span>
+        </button>
+
+        <div class="profile">
+            <div class="avatar">AD</div>
+            <div>
+                <b id="profileName">Quản trị viên</b>
+                <p>Bản thử nghiệm</p>
+            </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">
+    ↪ Đăng xuất
+</button>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <p>HỆ THỐNG QUẢN LÝ CA LÀM</p>
+                <h1 id="page-title">Tổng quan</h1>
+            </div>
+            <button class="primary" id="quick-create">
+                + Tạo bàn giao
+            </button>
+        </header>
+
+        <section class="page active" id="dashboard-page">
+
+            <div class="welcome">
+                <h2>Xin chào! 👋</h2>
+                <p>Theo dõi tình hình hoạt động tại đây.</p>
+            </div>
+
+            <div class="stats">
+
+                <div class="stat-card">
+                    <p>Tổng phiếu bàn giao</p>
+                    <h2 id="total-handovers">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Đang xử lý</p>
+                    <h2 id="in-progress">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Đã hoàn thành</p>
+                    <h2 id="completed">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Chưa xử lý</p>
+                    <h2 id="pending">0</h2>
+                </div>
+
+            </div>
+
+            <div class="section-heading">
+                <h3>Công việc gần đây</h3>
+                <button class="text-button" data-go="tasks">
+                    Xem tất cả →
+                </button>
+            </div>
+
+            <div class="panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CÔNG VIỆC</th>
+                            <th>NGƯỜI PHỤ TRÁCH</th>
+                            <th>CA LÀM</th>
+                            <th>TRẠNG THÁI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-table"></tbody>
+                </table>
+
+                <div class="empty" id="recent-empty">
+                    Chưa có công việc nào.
+                </div>
+            </div>
+
+        </section>
+
+        <section class="page" id="handover-page">
+
+            <h2>Tạo phiếu bàn giao</h2>
+            <p>Ghi lại thông tin cho ca làm tiếp theo.</p>
+
+            <form id="handover-form" class="panel form-panel">
+
+                <label>Người bàn giao
+                    <input id="employee" required
+                    placeholder="Nhập họ tên">
+                </label>
+
+                <label>Người tiếp nhận
+                    <input id="receiver" required
+                    placeholder="Nhập họ tên">
+                </label>
+
+                <label>Ca làm việc
+                    <select id="shift">
+                        <option>Ca sáng</option>
+                        <option>Ca chiều</option>
+                        <option>Ca tối</option>
+                    </select>
+                </label>
+
+                <label>Ngày bàn giao
+                    <input id="handover-date" type="date" required>
+                </label>
+
+                <label>Công việc đã hoàn thành
+                    <textarea id="done"></textarea>
+                </label>
+
+                <label>Công việc cần tiếp tục
+                    <textarea id="remaining"></textarea>
+                </label>
+
+                <label>Tình trạng và lưu ý
+                    <textarea id="notes"></textarea>
+                </label>
+
+                <button type="submit" class="primary">
+                    Lưu phiếu bàn giao
+                </button>
+
+            </form>
+        </section>
+
+        <section class="page" id="tasks-page">
+            <h2>Quản lý công việc</h2>
+            <p>Theo dõi tiến độ các nhiệm vụ.</p>
+
+            <div class="panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CÔNG VIỆC</th>
+                            <th>NGƯỜI PHỤ TRÁCH</th>
+                            <th>TRẠNG THÁI</th>
+                            <th>CẬP NHẬT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tasks-table"></tbody>
+                </table>
+
+                <div class="empty" id="tasks-empty">
+                    Chưa có công việc nào.
+                </div>
+            </div>
+        </section>
+
+        <section class="page" id="history-page">
+            <h2>Lịch sử bàn giao</h2>
+            <p>Xem lại các phiếu bàn giao đã tạo.</p>
+            <button class="primary" id="export-pdf">
+    ↓ Xuất báo cáo PDF
+</button>
+
+            <div id="history-list"></div>
+
+            <div class="empty panel" id="history-empty">
+                Chưa có lịch sử bàn giao.
+            </div>
+        </section>
+
+        <footer>
+            SMARTSHIFT © 2026 | SHIFT MANAGEMENT SYSTEM
+        </footer>
+
+    </main>
+
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>
